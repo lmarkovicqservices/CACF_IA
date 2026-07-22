@@ -1,0 +1,67 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "docker-build",
+      "label": "docker-build",
+      "dockerBuild": {
+        "context": "${workspaceFolder}",
+        "dockerfile": "${workspaceFolder}/Dockerfile",
+        "tag": "cacf_ia:dev"
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: debug",
+      "dependsOn": [
+        "docker-build"
+      ],
+      "dockerRun": {
+        "containerName": "cacf_ia_debug",
+        "image": "cacf_ia:dev",
+        "envFiles": [
+          "${workspaceFolder}/.env"
+        ],
+        "ports": [
+          {
+            "containerPort": 8000,
+            "hostPort": 8000
+          }
+        ],
+        "volumes": [
+          {
+            "localPath": "${workspaceFolder}/chroma_data",
+            "containerPath": "/app/chroma_data"
+          },
+          {
+            "localPath": "${workspaceFolder}/data",
+            "containerPath": "/app/data"
+          }
+        ]
+      },
+      "python": {
+        "module": "uvicorn",
+        "args": [
+          "app.main:app",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8000",
+          "--reload"
+        ]
+      }
+    },
+    {
+      "type": "shell",
+      "label": "compose-up: debugpy",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build -d",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "compose-down: debugpy",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.debug.yml down",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -7,12 +7,12 @@ from app.pricing.client import get_pricing_client
 CLASSIFICATION_PROMPT = """Clasifica la siguiente consulta de un socio de la Cámara Argentina de Contratistas Forrajeros.
 Responde SOLO con una de estas categorías en JSON:
 
-- {"intent": "tecnico"} → consulta técnica sobre ensilado, maquinaria, forraje, earlage, henolaje, henificación
-- {"intent": "precios_referencia"} → pregunta sobre precios de referencia
-- {"intent": "costos_silaje"} → pregunta sobre costos de silaje/ensilado
-- {"intent": "costo_materia_seca"} → pregunta sobre costo de materia seca
-- {"intent": "costos_transporte"} → pregunta sobre costos de transporte de materia verde
-- {"intent": "saludo"} → saludo o mensaje general
+- {{"intent": "tecnico"}} → consulta técnica sobre ensilado, maquinaria, forraje, earlage, henolaje, henificación
+- {{"intent": "precios_referencia"}} → pregunta sobre precios de referencia
+- {{"intent": "costos_silaje"}} → pregunta sobre costos de silaje/ensilado
+- {{"intent": "costo_materia_seca"}} → pregunta sobre costo de materia seca
+- {{"intent": "costos_transporte"}} → pregunta sobre costos de transporte de materia verde
+- {{"intent": "saludo"}} → saludo o mensaje general
 
 Consulta: {message}"""
 
