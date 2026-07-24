@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "TP_austral",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Local Test",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8000/api/answer",
+          "protocol": "http",
+          "host": [
+            "localhost:8000"
+          ],
+          "path": [
+            "api",
+            "answer"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pregunta\":\"cual es el costo del transporte\" \n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}
