@@ -1,4 +1,4 @@
-"""Consulta directa al engine como socio, sin webhook de WhatsApp ni validación de tokens."""
+"""Consulta directa al engine como socio, sin webhook de WhatsApp con un input de texto. Útil para tests y debugging."""
 import argparse
 import asyncio
 import json
