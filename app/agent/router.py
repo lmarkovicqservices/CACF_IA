@@ -4,15 +4,24 @@ from app.config import get_settings
 from app.rag.engine import get_rag_engine
 from app.pricing.client import get_pricing_client
 
+VALID_INTENTS = {
+    "precios_referencia",
+    "costos_silaje",
+    "costo_materia_seca",
+    "costos_transporte",
+    "saludo",
+    "tecnico",
+}
+
 CLASSIFICATION_PROMPT = """Clasifica la siguiente consulta de un socio de la Cámara Argentina de Contratistas Forrajeros.
 Responde SOLO con una de estas categorías en JSON:
 
-- {{"intent": "tecnico"}} → consulta técnica sobre ensilado, maquinaria, forraje, earlage, henolaje, henificación
 - {{"intent": "precios_referencia"}} → pregunta sobre precios de referencia
 - {{"intent": "costos_silaje"}} → pregunta sobre costos de silaje/ensilado
 - {{"intent": "costo_materia_seca"}} → pregunta sobre costo de materia seca
 - {{"intent": "costos_transporte"}} → pregunta sobre costos de transporte de materia verde
 - {{"intent": "saludo"}} → saludo o mensaje general
+- {{"intent": "tecnico"}} → consulta técnica sobre ensilado, maquinaria, forraje, earlage, henolaje, henificación
 
 Consulta: {message}"""
 
@@ -28,14 +37,20 @@ async def classify_intent(message: str) -> str:
             {"role": "system", "content": "Eres un clasificador de intenciones. Responde solo con JSON."},
             {"role": "user", "content": CLASSIFICATION_PROMPT.format(message=message)},
         ],
+        response_format={"type": "json_object"},
         temperature=0,
-        max_tokens=50,
+        max_tokens=80,
     )
 
     try:
-        result = json.loads(response.choices[0].message.content)
-        return result.get("intent", "tecnico")
-    except (json.JSONDecodeError, AttributeError):
+        content = (response.choices[0].message.content or "").strip()
+        result = json.loads(content) if content else {}
+        if not isinstance(result, dict):
+            return "tecnico"
+
+        intent = result.get("intent", "tecnico")
+        return intent if intent in VALID_INTENTS else "tecnico"
+    except (json.JSONDecodeError, AttributeError, TypeError, IndexError):
         return "tecnico"
 
 
