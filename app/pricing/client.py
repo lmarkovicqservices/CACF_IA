@@ -17,7 +17,7 @@ class PricingClient:
         """Obtiene los precios de referencia actuales."""
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/precios-referencia",
+                f"{self.base_url}/API_EcoPF.php",
                 headers=self._headers(),
                 timeout=10.0,
             )
@@ -28,7 +28,7 @@ class PricingClient:
         """Obtiene los costos de silaje."""
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/costos-silaje",
+                f"{self.base_url}/API_EcoCS.php",
                 headers=self._headers(),
                 timeout=10.0,
             )
@@ -39,7 +39,7 @@ class PricingClient:
         """Obtiene el costo por materia seca."""
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/costo-materia-seca",
+                f"{self.base_url}/API_EcoDetCMS.php",
                 headers=self._headers(),
                 timeout=10.0,
             )
@@ -50,7 +50,7 @@ class PricingClient:
         """Obtiene los costos de transporte de materia verde."""
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/costos-transporte-mv",
+                f"{self.base_url}/API_EcoDetCMTV.php",
                 headers=self._headers(),
                 timeout=10.0,
             )
