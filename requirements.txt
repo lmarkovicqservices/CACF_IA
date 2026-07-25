@@ -12,10 +12,11 @@ langchain-openai==0.2.14
 langchain-community==0.3.13
 
 # Vector Store
-chromadb==0.5.23
+chromadb==1.1.0
 
 # Document Processing
 python-docx==1.1.2
+docx2txt==0.8
 unstructured==0.16.11
 
 # HTTP Client
