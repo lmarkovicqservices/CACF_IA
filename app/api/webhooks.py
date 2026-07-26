@@ -24,7 +24,7 @@ async def verify_webhook(
 
 def verify_signature(payload: bytes, signature: str, secret: str) -> bool:
     """Verifica la firma HMAC-SHA256 del webhook de Meta."""
-    expected = hmac.new(
+    expected = hmac.HMAC(
         secret.encode(), payload, hashlib.sha256
     ).hexdigest()
     return hmac.compare_digest(f"sha256={expected}", signature)
