@@ -1,33 +1,32 @@
 # Core
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
-debugpy==1.8.14
-pydantic==2.10.3
-pydantic-settings==2.7.0
-python-dotenv==1.0.1
+fastapi>=0.115.6
+uvicorn[standard]>=0.34.0
+debugpy>=1.8.14
+pydantic>=2.10.3
+pydantic-settings>=2.7.0
+python-dotenv>=1.0.1
 
 # OpenAI + LangChain
-openai==1.58.1
-langchain==0.3.13
-langchain-openai==0.2.14
-langchain-community==0.3.13
+openai>=1.58.1
+langchain>=0.3.13
+langchain-openai>=0.2.14
+langchain-community>=0.3.13
 
 # Vector Store
-chromadb==0.5.23
+chromadb>=0.6.0
 
 # Document Processing
-python-docx==1.1.2
-docx2txt==0.8
-unstructured==0.16.11
+python-docx>=1.1.2
+docx2txt>=0.8
 
 # HTTP Client
-httpx==0.28.1
+httpx>=0.28.1
 
 # WhatsApp webhook security
-cryptography==44.0.0
+cryptography>=44.0.0
 
 # Testing
-pytest==8.3.4
+pytest>=8.3.4
 pytest-asyncio==0.24.0
 httpx==0.28.1
 

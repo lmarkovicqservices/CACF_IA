@@ -11,7 +11,9 @@ class PricingClient:
         self.api_key = settings.cacf_precios_api_key
 
     def _headers(self) -> dict:
-        return {"Authorization": f"Bearer {self.api_key}"}
+        if self.api_key:
+            return {"Authorization": f"Bearer {self.api_key}"}
+        return {}
 
     async def get_precios_referencia(self) -> dict:
         """Obtiene los precios de referencia actuales."""

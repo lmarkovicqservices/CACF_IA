@@ -1,7 +1,8 @@
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 from app.config import get_settings
 
 SYSTEM_TEMPLATE = """Eres un asistente técnico especializado en ensilado, earlage, henolaje y henificación
@@ -17,9 +18,11 @@ Pregunta del socio: {question}
 
 Respuesta:"""
 
-PROMPT = PromptTemplate(
-    template=SYSTEM_TEMPLATE, input_variables=["context", "question"]
-)
+PROMPT = ChatPromptTemplate.from_template(SYSTEM_TEMPLATE)
+
+
+def _format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
 
 class RAGEngine:
@@ -41,17 +44,17 @@ class RAGEngine:
             openai_api_key=settings.openai_api_key,
             temperature=0.2,
         )
-        self.qa_chain = RetrievalQA.from_chain_type(
-            llm=self.llm,
-            chain_type="stuff",
-            retriever=self.vectorstore.as_retriever(search_kwargs={"k": 5}),
-            chain_type_kwargs={"prompt": PROMPT},
+        retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+        self.chain = (
+            {"context": retriever | _format_docs, "question": RunnablePassthrough()}
+            | PROMPT
+            | self.llm
+            | StrOutputParser()
         )
 
     async def query(self, question: str) -> str:
         """Ejecuta una consulta técnica contra la base de conocimiento."""
-        result = await self.qa_chain.ainvoke({"query": question})
-        return result["result"]
+        return await self.chain.ainvoke(question)
 
 
 # Singleton

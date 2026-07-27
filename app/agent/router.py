@@ -54,17 +54,56 @@ async def classify_intent(message: str) -> str:
         return "tecnico"
 
 
-def format_pricing_response(data: dict, tipo: str) -> str:
-    """Formatea la respuesta de precios para WhatsApp."""
-    # TODO: Ajustar formateo según estructura real de la API
-    header = {
-        "precios_referencia": "📊 *Precios de Referencia CACF*",
-        "costos_silaje": "🌾 *Costos de Silaje*",
-        "costo_materia_seca": "📦 *Costo Materia Seca*",
-        "costos_transporte": "🚛 *Costos Transporte Materia Verde*",
-    }
-    title = header.get(tipo, "📊 *Información de Precios*")
-    return f"{title}\n\n{json.dumps(data, indent=2, ensure_ascii=False)}"
+PRICING_PROMPT = """Eres un asistente de la Cámara Argentina de Contratistas Forrajeros (CACF).
+El socio hizo una consulta sobre precios/costos y el sistema obtuvo los siguientes datos actualizados de la API de CACF.
+
+Contexto sobre las APIs de precios:
+{pricing_context}
+
+Datos obtenidos de la API:
+{api_data}
+
+Pregunta del socio: {question}
+
+Responde de forma clara, amigable y bien formateada para WhatsApp (usa negritas con *texto*, listas con •).
+Interpreta los datos y presenta la información relevante a la pregunta del socio.
+Si hay fechas o períodos, mencionálos. Si hay valores en pesos, formateálos con separador de miles."""
+
+PRICING_API_CONTEXT = """La CACF publica 4 indicadores económicos para sus socios contratistas forrajeros:
+
+1. *Precios de Referencia (API_EcoPF)*: Precios sugeridos por hectárea para servicios de picado fino (silaje). 
+   Incluyen valores orientativos según zona, tipo de cultivo (maíz, sorgo) y rendimiento estimado.
+
+2. *Costos de Silaje (API_EcoCS)*: Estructura de costos operativos para el contratista que realiza silaje. 
+   Incluye combustible, mano de obra, amortización de maquinaria, logística y márgenes.
+
+3. *Costo por Materia Seca (API_EcoMS)*: Costo por tonelada de materia seca producida. 
+   Útil para comparar eficiencia entre distintos cultivos y condiciones.
+
+4. *Costos de Transporte de Materia Verde (API_EcoTMV)*: Tarifas de flete para transporte de material 
+   picado desde el lote hasta la bolsa/bunker, según distancia en km.
+
+Estos valores se actualizan periódicamente y son referencia para negociaciones entre contratistas y productores."""
+
+
+async def generate_pricing_answer(data: dict, question: str) -> str:
+    """Pasa los datos de la API al LLM para generar una respuesta natural."""
+    settings = get_settings()
+    client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+    response = await client.chat.completions.create(
+        model=settings.openai_model,
+        messages=[
+            {"role": "user", "content": PRICING_PROMPT.format(
+                pricing_context=PRICING_API_CONTEXT,
+                api_data=json.dumps(data, indent=2, ensure_ascii=False),
+                question=question,
+            )},
+        ],
+        temperature=0.3,
+        max_tokens=1000,
+    )
+    return (response.choices[0].message.content or "").strip()
 
 
 async def process_message(phone_number: str, message: str) -> str:
@@ -100,9 +139,10 @@ async def process_message(phone_number: str, message: str) -> str:
         else:
             data = await pricing.get_precios_referencia()
 
-        return format_pricing_response(data, intent)
-    except Exception:
+        return await generate_pricing_answer(data, message)
+    except Exception as e:
         return (
             "No pude obtener la información de precios en este momento. "
-            "Por favor, intentá nuevamente en unos minutos."
+            "Por favor, intentá nuevamente en unos minutos.\n"
+            f"[Error técnico: {e}]"
         )

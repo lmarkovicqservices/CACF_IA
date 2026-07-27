@@ -6,8 +6,6 @@
     "configurations": [
       {"name":"Python Debugger: Current File","type":"debugpy","request":"launch","program":"${file}","console":"integratedTerminal"},
       {"name":"Py Debug: Local Chat","type":"debugpy","request":"launch","program":"./scripts/query_router_local.py","console":"integratedTerminal"},
-
-
       {
       "name": "Python: FastAPI (local)",
       "type": "debugpy",
@@ -19,7 +17,9 @@
         "0.0.0.0",
         "--port",
         "8000",
-        "--reload"
+        "--reload",
+        "--reload-exclude",
+        ".venv"
       ],
       "console": "integratedTerminal"
     },
