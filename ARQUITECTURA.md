@@ -59,13 +59,13 @@ Responde consultas técnicas sobre ensilado, earlage, henolaje y henificación, 
 
 | Capa          | Tecnología             | Versión |
 |---------------|------------------------|---------|
-| Lenguaje      | Python                 | 3.11+   |
+| Lenguaje      | Python                 | 3.14+   |
 | Framework API | FastAPI                | 0.115+  |
-| Server ASGI   | Uvicorn                | 0.30+   |
+| Server ASGI   | Uvicorn                | 0.34+   |
 | LLM           | OpenAI GPT-4o          | API     |
 | Embeddings    | text-embedding-3-small | API     |
-| RAG Framework | LangChain              | 0.2+    |
-| Vector Store  | ChromaDB               | 0.5+    |
+| RAG Framework | LangChain              | 0.3.13+ |
+| Vector Store  | ChromaDB               | 0.6+    |
 | WhatsApp      | Meta Cloud API         | v21.0   |
 | Doc Processing| python-docx, unstructured| -     |
 | Validación    | Pydantic v2              | -     |
