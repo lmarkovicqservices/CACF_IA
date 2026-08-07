@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 from fastapi import APIRouter, Request, Query, HTTPException
+from fastapi.responses import PlainTextResponse
 from app.config import get_settings
 from app.auth.validator import validate_member
 from app.whatsapp.client import send_text_message
@@ -18,7 +19,7 @@ async def verify_webhook(
     """Verificación del webhook de Meta (subscription)."""
     settings = get_settings()
     if hub_mode == "subscribe" and hub_verify_token == settings.whatsapp_verify_token:
-        return int(hub_challenge)
+        return PlainTextResponse(content=hub_challenge)
     raise HTTPException(status_code=403, detail="Token de verificación inválido")
 
 
